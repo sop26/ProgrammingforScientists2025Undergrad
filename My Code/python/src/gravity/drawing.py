@@ -91,6 +91,7 @@ def animate_system(
         if i % drawing_frequency == 0:
             current_surface = draw_to_canvas(u, canvas_width)
             surfaces.append(current_surface)
+    return surfaces
 
 def draw_to_canvas(
     u: Universe,

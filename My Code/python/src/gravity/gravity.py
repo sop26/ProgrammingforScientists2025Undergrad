@@ -46,6 +46,7 @@ def update_universe(current_universe: Universe, time: float) -> Universe:
         body.acceleration = update_acceleration(current_universe, body)
         body.velocity = update_velocity(body, old_acceleration, time)
         body.position = update_position(body, old_acceleration, old_velocity, time) 
+    return new_universe
   
 
 def update_acceleration(current_universe: Universe, b: Body) -> OrderedPair:
@@ -70,29 +71,6 @@ def update_acceleration(current_universe: Universe, b: Body) -> OrderedPair:
     
     return OrderedPair(ax, ay)
 
-def update_velocity(b: Body, old_acceleration: OrderedPair, time: float) -> OrderedPair:
-    """
-    Update velocity using average acceleration over the step.
-
-    Formula:
-        v_{t+Δt} = v_t + 0.5 * (a_t + a_{t+Δt}) * Δt
-
-    Args:
-        b (Body): The body whose velocity is being updated. Must have
-            a `velocity` attribute (OrderedPair) and a current 
-            `acceleration` attribute (OrderedPair).
-        old_acceleration (OrderedPair): The acceleration of the body at 
-            the previous time step.
-        time (float): The time step Δt over which to update the velocity.
-
-    Returns:
-        OrderedPair: A new OrderedPair representing the updated velocity 
-        components (vx, vy).
-    """
-    # TODO: add code here
-    pass
-
-
 def update_position(b: Body, old_acc: OrderedPair, old_vel: OrderedPair, time: float) -> OrderedPair:
     """
     Update position using constant-acceleration kinematics.
@@ -114,8 +92,8 @@ def update_position(b: Body, old_acc: OrderedPair, old_vel: OrderedPair, time: f
         OrderedPair: A new OrderedPair containing the updated position 
         components (px, py).
     """
-    px = b.position + old_vel.x * time + 0.5 * old_acc.x * time**2
-    py = b.position + old_vel.y * time + 0.5 * old_acc.y * time**2
+    px = b.position.x + old_vel.x * time + 0.5 * old_acc.x * time**2
+    py = b.position.y + old_vel.y * time + 0.5 * old_acc.y * time**2
     
     return OrderedPair(px, py)
 
@@ -142,7 +120,7 @@ def update_velocity(b: Body, old_acceleration: OrderedPair, time: float) -> Orde
     vx = b.velocity.x + 0.5 * (old_acceleration.x + b.acceleration.x) * time
     vy = b.velocity.y + 0.5 * (old_acceleration.y + b.acceleration.y) * time
     
-    return (vx, vy)
+    return OrderedPair(vx, vy)
 
 
 def compute_net_force(current_universe: Universe, b: Body) -> OrderedPair:
@@ -166,7 +144,6 @@ def compute_net_force(current_universe: Universe, b: Body) -> OrderedPair:
             net_force.y += current_force.y
     return net_force
 
-
 def compute_force(b1: Body, b2: Body, G: float) -> OrderedPair:
     """
     Compute the gravitational force exerted on one body by another.
@@ -189,7 +166,7 @@ def compute_force(b1: Body, b2: Body, G: float) -> OrderedPair:
     fx = F_magnitude * (dx/d)
     fy = F_magnitude * (dy/d)
     
-    return (fx, fy)
+    return OrderedPair(fx, fy)
 
 def distance(p1: OrderedPair, p2: OrderedPair) -> float:
     """

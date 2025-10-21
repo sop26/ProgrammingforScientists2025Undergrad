@@ -20,7 +20,7 @@ def initialize_board(num_rows: int, num_cols: int):
         new_board.append([0] * num_cols)
     for i in range(num_rows):
         for j in range(num_cols):
-            new_board[i][j] = [0.0, 0.0]
+            new_board[i][j] = (0.0, 0.0)
     return new_board
 
 def simulate_gray_scott(initial_board: list[list[tuple[float, float]]], num_gens: int, feed_rate: float, kill_rate: float, prey_diffusion_rate: float, predator_diffusion_rate: float, kernel: list[list[float]]) -> list[list[list[tuple[float, float]]]]:
@@ -66,7 +66,7 @@ def update_board(current_board: list[list[tuple[float, float]]], feed_rate: floa
     num_rows = len(current_board)
     num_cols = len(current_board[0])
     new_board = []
-    for i in range(num_rows):
+    for _ in range(num_rows):
         new_board.append([0] * num_cols)
     for row in range(num_rows):
         for col in range(num_cols):

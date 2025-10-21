@@ -41,17 +41,17 @@ def main():
     # a little for loop to fill predators
     for r in range(mid_row - pred_rows // 2, mid_row + pred_rows // 2):
         for c in range(mid_col - pred_cols // 2, mid_col + pred_cols // 2):
-            initial_board[r][c][1] = 1 # predators
+            initial_board[r][c] = (initial_board[r][c][0], 1) # predators
 
     # make prey = 1 everywhere
     for i in range(len(initial_board)):
         for j in range(len(initial_board[i])):
-            initial_board[r][c][0] = 1
+            initial_board[i][j] = (1, initial_board[i][j][1])
 
     # parameters
     num_gens = 8000
-    feed_rate = 0.034
-    kill_rate = 0.095
+    feed_rate = 0.039
+    kill_rate = 0.10
 
     # kernel for diffusion
     kernel = np.array([
@@ -62,43 +62,56 @@ def main():
 
     print("Starting simulation...")
     
-    # final board
-    # while ratio of final board too high in either direction
-    #     increment kill rate by a value scaled to the difference between b and a (b/b+a)
-    # check if one color much greater than other
-    # or check if change from one board to the next is very small - too computationally intensive to do this and i also don't want to inject code into functional subroutines to check the differences between each time step
-    # just implement final board approach
-    # boards = simulate_gray_scott(
-    #     initial_board,
-    #     num_gens,
-    #     feed_rate,
-    #     kill_rate,
-    #     prey_diffusion_rate=0.2,
-    #     predator_diffusion_rate=0.1,
-    #     kernel=kernel,
-    # )
-    # to_continue = True
-    # STEP_SIZE = 0.5
-    # while to_continue:
-    #     final_board = boards[len(boards) - 1]
-    #     total_A = total_concentration(final_board)[0]
-    #     total_B = total_concentration(final_board)[1]
-
-    #     metric = total_B / (total_B + total_A)
-    #     if metric < 0.1 or metric > 0.9:
-    #         kill_rate = (2 * metric - 1) * STEP_SIZE
-    #     else:
-    #         to_continue = False
+    # tuning code below as an attempt to automate search for patterns but didn't quite work
+    # if one color substantially greater than other in final board, adjust kill rate (or feed rate) to compensate and run sim again
+    
+    # TUNE = True
+    # STEP_SIZE = 0.05
+    
+    # if TUNE:
+    #     to_continue = True
+    #     while to_continue:
+    #         print("FINAL_FEED", feed_rate, "FINAL_KILL", kill_rate)
+    #         boards = simulate_gray_scott(
+    #             initial_board,
+    #             num_gens,
+    #             feed_rate,
+    #             kill_rate,
+    #             prey_diffusion_rate=0.2,
+    #             predator_diffusion_rate=0.1,
+    #             kernel=kernel,
+    #         )
+    #         final_board = boards[len(boards) - 1]
+    #         total_A = total_concentration(final_board)[0]
+    #         total_B = total_concentration(final_board)[1]
+    #         print("NEW ROUND")
+    #         print("total_B", total_B, "total_A", total_A)
+    #         if total_B + total_A == 0:
+    #             metric = 0.0
+    #         else:
+    #             metric = total_B / (total_B + total_A)
+                
+    #         if metric < 0.1 or metric > 0.9:
+    #             print("metric", metric)
+    #             updated_kill_rate = kill_rate + ((2 * metric - 1) * STEP_SIZE)
+    #             if updated_kill_rate < 0:
+    #                 feed_rate += (2 * metric - 1) * STEP_SIZE
+    #             else:
+    #                 kill_rate = updated_kill_rate
+    #         else:
+    #             to_continue = False
+    # else:
     
     boards = simulate_gray_scott(
-        initial_board,
-        num_gens,
-        feed_rate,
-        kill_rate,
-        prey_diffusion_rate=0.2,
-        predator_diffusion_rate=0.1,
-        kernel=kernel,
-    )
+            initial_board,
+            num_gens,
+            feed_rate,
+            kill_rate,
+            prey_diffusion_rate=0.2,
+            predator_diffusion_rate=0.1,
+            kernel=kernel,
+        )
+
     print("Simulation complete!")
 
     print("Drawing boards to file")

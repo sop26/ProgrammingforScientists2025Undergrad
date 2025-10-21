@@ -39,7 +39,13 @@ class Rectangle:
     def __repr__(self) -> str:
         # let's have a nice f string to print the attributes 
         return f"Rectangle(width={self.width},height={self.height},x1={self.x1}, y1={self.y1}, rotation={self.rotation})"
-
+    
+    def area(self) -> float:
+        """
+        Method to return the area of the rectangle
+        """
+        return self.width * self.height
+        
 class Circle:
     """
     Represents a 2D circle via its center and radius.
@@ -65,80 +71,20 @@ class Circle:
     def __repr__(self) -> str:
         # let's have a nice f string to print the attributes 
         return f"Circle(x1={self.x1}, y1={self.y1}, radius={self.radius})"
+    
+    def area(self) -> float:
+        """
+        Method to return the area of the circle
+        """
+        return 3.14 * self.radius**2
 
 
 def main():
     print("Shapes.")
-
-    # these declarations create an INSTANCE of the object with the default attributes
-    x1 = 1.0
-    y1 = 3.0
-    radius = 2.0
-    my_circle = Circle(x1, y1, radius)  # x1 = 1.0, y1 = 3.0, radius = 2.0
-    
-    r = Rectangle(3.0, 5.0)  # some languages might get mad, Python never gets mad
-    # other attributes of r get their defaults (0.0)
-
-
-    """
-    # the baby is born and we can update its attributes 
-    my_circle.x1 = 1.0 
-    my_circle.y1 = 3.0
-    my_circle.radius = 2.0
-
-    r.width = 3.0
-    r.height = 5.0
-
-    r.name = "Larry"  # you can do this but don't do this
-    """
-
-    # let's print the whole thing 
-    print("our rectangle is", r)
-    print("our circle is", my_circle)
-
-    # just because we initialized attributes doesn't mean we can't change them 
-    r.width = 2.0 
-    r.height = 4.5
-    r.x1 = -1.45
-    r.y1 = 2.3
-
-    print("The rectangle has been updated to", r)
-
-    # lesson: you can't name functions the same thing in Python (except when you can, hold on for next week)
-
-    print("Rectangle's area is", area_rectangle(r))
-    print("Circle's area is", area_circle(my_circle))
-
-    # are instances of a new class pass by reference or value?
-    translate_circle(my_circle, 10.0, 10.0)
-    translate_rectangle(r, 30.0, -100.0)
-
-    print("The circle has been translated to", my_circle)
-    print("The rectangle has been translated to", r)
-
-    # instances of a new class are pass by REFERENCE
-    # 1. you don't have to return the object 
-    # 2. be CAREFUL about changing attributes of an object in a function
-
-    # what we really want is just translate() functions that don't take objects as input
-
-    # we can access class attributes in two ways 
-    # 1. access it through an instance
-    print("Our rectangle is", r.description)
-
-    #2. access it via the name of the class 
-    print("Every circle is", Circle.description)
-
-    my_circle.description = "orb-like"
-    print("My circle is", my_circle.description)
-    # this creates a new (local) attribute of my_circle and doesn't affect any other circle or the class attribute
-    # do not ever use this
-
-    # did I overwrite every circle's description?
-    print("Every circle is", Circle.description)
-
-
-
+    r = Rectangle(width = 3.0, height = 4.0) # don't even need to get order right if we specify attributes
+    c = Circle(x1 = 0.0, y1 = 0.0, radius = 3.0)
+    print(r.area())
+    print(c.area())
 
 
 def area_rectangle(r: Rectangle) -> float:
