@@ -41,12 +41,12 @@ def main():
     # a little for loop to fill predators
     for r in range(mid_row - pred_rows // 2, mid_row + pred_rows // 2):
         for c in range(mid_col - pred_cols // 2, mid_col + pred_cols // 2):
-            initial_board[r][c][1] = 1.0  # predators
+            initial_board[r][c] = (initial_board[r][c][0], 1) # predators
 
     # make prey = 1 everywhere
     for i in range(len(initial_board)):
         for j in range(len(initial_board[i])):
-            initial_board[i][j][0] = 1.0
+            initial_board[r][c] = (1, initial_board[r][c][1])
 
     # parameters
     num_gens = 8000
