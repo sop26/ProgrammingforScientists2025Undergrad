@@ -3,6 +3,10 @@
 
 # place class declarations between imports and def main
 
+from dataclasses import dataclass
+import copy
+
+@dataclass
 class Rectangle:
     """
     Represents a 2D rectangle with width, height, position, and rotation
@@ -19,32 +23,31 @@ class Rectangle:
     """
 
     description: str = "boxy"
+    width: float = 1.0
+    height: float = 1.0
+    rotation: float = 0.0
+    x1: float = 0.0
+    y1: float = 0.0
 
-    # Every class declaration should have a constructor to set fields
-    # Also, Python calls fields "attributes"
-    # We will allow the user to set attributes of an instance the second it is born
-    def __init__(self, width: float=0.0, height: float=0.0, x1: float=0, y1: float=0, rotation: float=0):
-        # let's protect the program from a bad user 
-        if width < 0.0 or height < 0.0:
-            raise ValueError("width and height must be nonnegative.")
-        # we could add tests for if variables are all floats, etc.
-        
-        # what attributes should every Rectangle get?
-        self.width = width
-        self.height = height
-        self.x1 = x1
-        self.y1 = y1
-        self.rotation = rotation
-
-    def __repr__(self) -> str:
-        # let's have a nice f string to print the attributes 
-        return f"Rectangle(width={self.width},height={self.height},x1={self.x1}, y1={self.y1}, rotation={self.rotation})"
-    
     def area(self) -> float:
         """
         Method to return the area of the rectangle
         """
         return self.width * self.height
+    
+    def translate(self, a: float, b: float) -> None:
+        """
+        Method to translate a shape a units in the x direction and b units in the y direction
+        """
+        self.x1 += a
+        self.y1 += b
+        
+    def scale(self, f: float) -> None:
+        """
+        Dilate the shape of f.
+        """
+        self.width *= f
+        self.height *= f
         
 class Circle:
     """
@@ -61,31 +64,131 @@ class Circle:
 
     description: str = "round"
 
-    def __init__(self, x1: float=0, y1: float = 0, radius: float = 0):
-        if radius < 0.0:
-            raise ValueError("width and height must be nonnegative.")
-        self.x1 = x1
-        self.y1 = y1
-        self.radius = radius
-
-    def __repr__(self) -> str:
-        # let's have a nice f string to print the attributes 
-        return f"Circle(x1={self.x1}, y1={self.y1}, radius={self.radius})"
-    
+    x1: float = 0.0
+    y1: float = 0.0
+    radius: float = 1.0
+   
     def area(self) -> float:
         """
         Method to return the area of the circle
         """
         return 3.14 * self.radius**2
+    
+    def translate(self, a: float, b: float) -> None:
+        """
+        Method to translate a shape a units in the x direction and b units in the y direction
+        """
+        self.x1 += a
+        self.y1 += b
+    
+    def scale(self, f: float) -> None:
+        """
+        Dilate the shape of f.
+        """
+        self.radius *= f
+
+@dataclass
+class Node:
+    name: str = ""
+    age: float = 0.0
+   
+@dataclass
+class Tree:
+    nodes: list = None
+    label: str = ""
+        
+def tree_trouble():
+    t = Tree(nodes=[Node("A", 1), Node("B", 2)], label = "This is t.")
+    print("Original t:", t)
+    
+    """
+    sus
+    s = Tree()
+    s.label = t.label
+    s.label = "This is s."
+    s.nodes = t.nodes
+    s.nodes[0].name = "Fred" #this changes t.nodes since they have the same reference
+    """
+    
+    s = copy.deepcopy(t)
+    
+    print("s", s)
+    print("t", t)
 
 
 def main():
     print("Shapes.")
+    
+    tree_trouble()
+    
+    
+    n = 5
+    # Python gives variable numeric ID (not memory address)
+    print("Outside function before change:", n, id(n))
+    change_value(n)
+    print("Outside function after change:", n, id(n))
+
+    # all mutable things are passed by reference
+    # imutable are passed by value
+    # tuples
+    # strings
+    # ints, floats, booleans
+    
+    # in python, everything is an object and passed by object reference
+    
+    # q = a[8:10] q makes a copy of a
+    
+    # id() is useful if we have two objects we can check if they are actually the same literal object
+    r1 = Rectangle(width = 3.0, height = 4.0, x1 = 0.0, y1 = 0.0)
+    r2 = r1
+    print(id(r2), id(r1))
+    weirdest_thing_in_python_ever()
+    
+def weirdest_thing_in_python_ever():
+    x = 42
+    y = x
+    z = 42
+    # python prestores integers up until 255 - if use 42 instead of 420, "They can't be the same, RIGHT?" gets printed
+    
+    if id(x) == id(z):
+        print("x and z have the same address")
+    
+    if id(x) == id(y):
+        print("Same reference in memory") 
+        
+    y += 10   
+    
+    if id(x) == id(y):
+        print("Still the same?") 
+        
+    y -= 10
+    
+    if id(x) == id(y):
+        print("They can't be the same, RIGHT?") 
+    
+def change_value(x: int) -> None:
+    print("Inside function before change: ", x, id(x))
+    # id(x) should not be id(n) because a copy got created
+    # you are passing the literal integer in by (object) reference
+    # once you CHANGE it, it becomes DIFFERENT because integer is IMMUTABLE
+    x += 10 # a new variable with name x gets created
+    print("Inside function after change: ", x, id(x))
+
+def basic_shape_stuff():
     r = Rectangle(width = 3.0, height = 4.0) # don't even need to get order right if we specify attributes
-    c = Circle(x1 = 0.0, y1 = 0.0, radius = 3.0)
+    c = Circle(x1 = 0.0, y1 = 0.0, radius = 4.0)
     print(r.area())
     print(c.area())
-
+    r.translate(10.0, -5.0)
+    c.translate(2.5, 3.5)
+    print(r)
+    print(c)
+    r.scale(2.0)
+    c.scale(0.4)
+    print(r)
+    print(c)    
+    print(r.area())
+    print(c.area())
 
 def area_rectangle(r: Rectangle) -> float:
     """
